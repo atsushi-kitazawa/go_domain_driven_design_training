@@ -14,4 +14,10 @@ func main() {
 	panic(err)
     }
     fmt.Println(user)
+
+    user = user.ChangeUserName("hoge change")
+    fmt.Println(user)
+
+    user = user.ChangeUserName("h")
+    fmt.Println(user)
 }

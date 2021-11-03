@@ -49,3 +49,12 @@ func NewUserPhoneNumber(phoneNumber string) UserPhoneNumber {
 func (u User) String() string {
    return fmt.Sprintf("User [name=%s, phoneNumber=%s]", u.name, u.phoneNumber)
 }
+
+func (u *User) ChangeUserName(name string) *User {
+    user, err := NewUser(name, u.phoneNumber.phoneNumber)
+    if err != nil {
+	fmt.Println(err)
+	return u
+    }
+    return user
+}

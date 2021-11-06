@@ -11,17 +11,20 @@ import (
 )
 
 func main() {
+    // parse args
     id := flag.Int("id", 0, "id")
     name := flag.String("name", "todo", "todo name")
     description := flag.String("desc", "todo description", "todo description")
     flag.Parse()
-    fmt.Println(*id, *name, *description)
 
+    // init application service
     application.Init(repository.TodoRepository{})
 
+    // register todo
     todo := domain.NewTodo(*id, *name, *description)
     application.Register(*todo)
 
+    // get todo
     getTodo := application.Get(*id)
     fmt.Println(getTodo)
 }

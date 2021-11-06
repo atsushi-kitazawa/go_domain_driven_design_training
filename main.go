@@ -1,18 +1,29 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 
+	"github.com/atsushi-kitazawa/go_domain_driven_design_training/application"
 	"github.com/atsushi-kitazawa/go_domain_driven_design_training/domain"
 	"github.com/atsushi-kitazawa/go_domain_driven_design_training/infra"
 	"github.com/atsushi-kitazawa/go_domain_driven_design_training/repository"
 )
 
 func main() {
-	fmt.Println("main")
-	//test2()
-	//test3()
-	test4()
+    id := flag.Int("id", 0, "id")
+    name := flag.String("name", "todo", "todo name")
+    description := flag.String("desc", "todo description", "todo description")
+    flag.Parse()
+    fmt.Println(*id, *name, *description)
+
+    application.Init(repository.TodoRepository{})
+
+    todo := domain.NewTodo(*id, *name, *description)
+    application.Register(*todo)
+
+    getTodo := application.Get(*id)
+    fmt.Println(getTodo)
 }
 
 func test1() {
@@ -36,18 +47,4 @@ func test2() {
 func test3() {
 	todo := domain.NewTodo(1, "'aaa", "aaa description")
 	fmt.Println(todo)
-}
-
-func test4() {
-	repo := repository.TodoRepository{}
-	todo := repo.Find(1)
-	fmt.Println(todo)
-
-	todo = *domain.NewTodo(2, "todoB", "this todo is B")
-	repo.Save(todo)
-
-	repo = repository.TodoRepository{}
-	todo = repo.Find(2)
-	fmt.Println(todo)
-
 }

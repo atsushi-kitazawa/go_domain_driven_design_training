@@ -8,7 +8,7 @@ import (
 )
 
 type ITodoRepository interface {
-	Find(id int)
+	Find(id int) domain.Todo
 	Save(todo domain.Todo)
 }
 
@@ -16,7 +16,7 @@ type TodoRepository struct {
 }
 
 type InMemoryTodoRepository struct {
-    Stores []domain.Todo
+	Stores []domain.Todo
 }
 
 func (t TodoRepository) Find(id int) domain.Todo {
@@ -40,19 +40,19 @@ func (t TodoRepository) Find(id int) domain.Todo {
 }
 
 func (t TodoRepository) Save(todo domain.Todo) {
-    db, err := sql.Open("postgres", "host=127.0.0.1 port=15432 user=postgres password=mysecretpassword dbname=testdb sslmode=disable")
+	db, err := sql.Open("postgres", "host=127.0.0.1 port=15432 user=postgres password=mysecretpassword dbname=testdb sslmode=disable")
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
 
-    stmt, err := db.Prepare("insert into todo values ($1, $2, $3)")
-    if err != nil {
-	panic(err)
-    }
+	stmt, err := db.Prepare("insert into todo values ($1, $2, $3)")
+	if err != nil {
+		panic(err)
+	}
 
-    _, err = stmt.Exec(todo.Id, todo.Name, todo.Description)
-    if err != nil {
-	panic(err)
-    }
+	_, err = stmt.Exec(todo.Id, todo.Name, todo.Description)
+	if err != nil {
+		panic(err)
+	}
 }

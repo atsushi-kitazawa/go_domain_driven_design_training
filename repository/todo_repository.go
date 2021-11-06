@@ -10,13 +10,14 @@ import (
 type ITodoRepository interface {
 	Find(id int) domain.Todo
 	Save(todo domain.Todo)
+	Delete(id int)
 }
 
 type TodoRepository struct {
 }
 
 type InMemoryTodoRepository struct {
-	Stores []domain.Todo
+    Stores []domain.Todo
 }
 
 func (t TodoRepository) Find(id int) domain.Todo {
@@ -55,4 +56,49 @@ func (t TodoRepository) Save(todo domain.Todo) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (t TodoRepository) Delete(id int) {
+	db, err := sql.Open("postgres", "host=127.0.0.1 port=15432 user=postgres password=mysecretpassword dbname=testdb sslmode=disable")
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	stmt, err := db.Prepare("delete from todo where id = $1")
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = stmt.Exec(id)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func NewInmemoryTodoRepository() *InMemoryTodoRepository {
+    ret := &InMemoryTodoRepository{}
+    ret.Stores = make([]domain.Todo, 10)
+    return ret
+}
+
+func (t *InMemoryTodoRepository) Find(id int) domain.Todo {
+    for _, v := range t.Stores {
+	if v.Id == id {
+	    return v
+	}
+    }
+    return domain.Todo{}
+}
+
+func (t *InMemoryTodoRepository) Save(todo domain.Todo) {
+    t.Stores = append(t.Stores, todo)
+}
+
+func (t *InMemoryTodoRepository) Delete(id int) {
+    for i, v := range t.Stores {
+	if v.Id == id {
+	    t.Stores[i] = t.Stores[len(t.Stores)-1]
+	}
+    }
 }

@@ -18,7 +18,8 @@ func main() {
     flag.Parse()
 
     // init application service
-    application.Init(repository.TodoRepository{})
+    //application.Init(repository.TodoRepository{})
+    application.Init(repository.NewInmemoryTodoRepository())
 
     // register todo
     todo := domain.NewTodo(*id, *name, *description)
